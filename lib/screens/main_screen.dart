@@ -13,57 +13,132 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int currentIndex = 0;
 
-  late List<Widget> screens;
-
-  @override
-  void initState() {
-    super.initState();
-
-    screens = [
-      HomeScreen(
-        onWatchLive: () {
-          setState(() {
-            currentIndex = 1;
-          });
-        },
-      ),
-      // const LiveScreen(),
-      LiveScreen(
-        onExit: () {
-          setState(() {
-            currentIndex = 0;
-          });
-        },
-      ),
-      const Center(child: Text("Search Screen")),
-      const AboutScreen(),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: screens[currentIndex],
+      backgroundColor: Colors.white,
 
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-        backgroundColor: const Color(0xFFEFEFEF),
-        selectedItemColor: const Color(0xFF197FE6),
-        unselectedItemColor: Colors.black54,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.live_tv), label: "Live"),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-          BottomNavigationBarItem(icon: Icon(Icons.info), label: "About"),
-        ],
+      // ============================================================
+      // SCREEN CONTENT
+      // ============================================================
+      body: _buildCurrentScreen(),
+
+      // ============================================================
+      // BOTTOM NAVIGATION
+      // ============================================================
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: const Color(0xFFE8ECF2), width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: NavigationBar(
+              height: 68,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              selectedIndex: currentIndex,
+
+              indicatorColor: const Color(0xFFEAF3FF),
+
+              onDestinationSelected: (index) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
+
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+
+              destinations: const [
+                // --------------------------------------------------
+                // HOME
+                // --------------------------------------------------
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined, color: Colors.black54),
+                  selectedIcon: Icon(
+                    Icons.home_rounded,
+                    color: Color(0xFF197FE6),
+                  ),
+                  label: "Home",
+                ),
+
+                // --------------------------------------------------
+                // LIVE
+                // --------------------------------------------------
+                NavigationDestination(
+                  icon: Icon(Icons.live_tv_outlined, color: Colors.black54),
+                  selectedIcon: Icon(
+                    Icons.live_tv_rounded,
+                    color: Color(0xFF197FE6),
+                  ),
+                  label: "Live",
+                ),
+
+                // --------------------------------------------------
+                // ABOUT
+                // --------------------------------------------------
+                NavigationDestination(
+                  icon: Icon(Icons.info_outline_rounded, color: Colors.black54),
+                  selectedIcon: Icon(
+                    Icons.info_rounded,
+                    color: Color(0xFF197FE6),
+                  ),
+                  label: "About",
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
+  }
+
+  // ================================================================
+  // CURRENT SCREEN
+  // ================================================================
+
+  Widget _buildCurrentScreen() {
+    switch (currentIndex) {
+      case 0:
+        return HomeScreen(
+          onWatchLive: () {
+            setState(() {
+              currentIndex = 1;
+            });
+          },
+        );
+
+      case 1:
+        return LiveScreen(
+          onExit: () {
+            setState(() {
+              currentIndex = 0;
+            });
+          },
+        );
+
+      case 2:
+        return const AboutScreen();
+
+      default:
+        return HomeScreen(
+          onWatchLive: () {
+            setState(() {
+              currentIndex = 1;
+            });
+          },
+        );
+    }
   }
 }
